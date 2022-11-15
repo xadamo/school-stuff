@@ -1,0 +1,2 @@
+wczytaj_tekst(Tekst) :-
+    format("~w~n", [Tekst]).

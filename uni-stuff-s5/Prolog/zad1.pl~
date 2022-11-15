@@ -1,0 +1,94 @@
+use strict;
+use warnings FATAL => 'all';
+matka(elzbieta, przemek).
+matka(elzbieta, krzysiek).
+matka(ania, grzegorz).
+matka(ania, piotr).
+matka(wieslawa, slawomir).
+matka(wieslawa, elzbieta).
+ojciec(grzegorz, przemek).
+ojciec(grzegorz, krzysiek).
+ojciec(jan, elzbieta).
+ojciec(jan, slawomir).
+ojciec(wladyslaw, piotr).
+ojciec(wladyslaw, grzegorz).
+
+plec(elzbieta, k).
+plec(przemek, m).
+plec(krzysiek, m).
+plec(ania, k).
+plec(grzegorz, m).
+plec(piotr, m).
+plec(wieslawa, k).
+plec(slawomir, m).
+plec(grzegorz, m).
+plec(jan, m).
+plec(wladyslaw, m).
+
+% dziadek, babcia,
+% stryj (brat ojca), wuj(brat matki), ciotka, potomek, kuzyn, krewny,
+% liczba dzieci, liczba potomków
+
+rodzic(Rodzic, Dziecko) :- 
+    ojciec(Rodzic, Dziecko);
+    matka(Rodzic, Dziecko).
+
+dziecko(Rodzic, Dziecko) :-
+    rodzic(Rodzic, Dziecko).
+
+syn(Rodzic, Syn) :-
+    rodzic(Rodzic, Syn),
+    plec(Syn, m).
+
+corka(Rodzic, Corka) :-
+    rodzic(Rodzic, Corka),
+    plec(Corka, k).
+
+rodzenstwo(Kto, Kogo) :-
+    matka(A, Kto),
+    matka(A, Kogo),
+    Kto \= Kogo.
+
+siostra(Kto, Kogo) :-
+    rodzenstwo(Kto, Kogo),
+    plec(Kogo, k).
+
+brat(Kto, Kogo) :- 
+    rodzenstwo(Kto, Kogo),
+    plec(Kogo, m).
+
+zona(Zona, Maz) :- 
+    ojciec(Maz, A),
+    matka(Zona, A),
+    plec(Maz, m).
+
+maz(Maz, Zona) :-
+    matka(Zona, A),
+    ojciec(Maz, A),
+    plec(Zona, k).
+
+wnuk(Wnuk, Czyj) :-
+    rodzic(Czyj, A),
+    rodzic(A, B),
+    Wnuk = B.
+
+przodek(Dziecko, Czyj) :-
+    rodzic(Czyj, Dziecko).
+
+przodek(Dziecko, Czyj) :-
+    rodzic(A, Dziecko),
+    przodek(A, Czyj).
+
+listaDzieci(Rodzic, Lista) :-
+    findall(Dziecko, rodzic(Rodzic, Dziecko), Lista).
+    
+
+zlicz([], 0).
+
+zlicz([_|X], Y) :-
+    zlicz(X, Z),
+    Y is Z + 1.
+
+liczbaDzieci(Rodzic, Ilosc) :-
+    listaDzieci(Rodzic, Lista),
+    zlicz(Lista, Ilosc).
